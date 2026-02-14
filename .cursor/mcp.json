@@ -7,6 +7,9 @@
     "convex": {
       "command": "nlx",
       "args": ["-y", "convex@latest", "mcp", "start"]
+    },
+    "vercel": {
+      "url": "https://mcp.vercel.com"
     }
   }
 }
