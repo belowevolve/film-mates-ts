@@ -1,0 +1,13 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "extends": [
+    "./node_modules/ultracite/config/oxlint/core/.oxlintrc.json",
+    "./node_modules/ultracite/config/oxlint/react/.oxlintrc.json",
+    "./node_modules/ultracite/config/oxlint/remix/.oxlintrc.json"
+  ],
+  "rules": {
+    "func-style": "warn",
+    "react-perf/jsx-no-new-function-as-prop": "off"
+  },
+  "ignorePatterns": ["**/convex/_generated/**"]
+}
