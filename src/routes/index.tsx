@@ -6,10 +6,8 @@ import { useCallback, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { api } from "@/convex/_generated/api";
 import { authClient } from "@/lib/auth-client";
-
-// oxlint-disable-next-line import/no-relative-parent-imports
-import { api } from "../../convex/_generated/api";
 
 export const Route = createFileRoute("/")({
   component: Home,

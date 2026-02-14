@@ -1,3 +1,12 @@
 {
-  "mcpServers": {}
+  "mcpServers": {
+    "shadcn": {
+      "command": "nlx",
+      "args": ["shadcn@latest", "mcp"]
+    },
+    "convex": {
+      "command": "nlx",
+      "args": ["-y", "convex@latest", "mcp", "start"]
+    }
+  }
 }
