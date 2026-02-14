@@ -119,7 +119,7 @@ function LoginPage() {
             )}
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Loading..." : (isSignUp ? "Sign Up" : "Sign In")}
+              {loading ? "Loading..." : isSignUp ? "Sign Up" : "Sign In"}
             </Button>
 
             <p className="text-center text-sm text-muted-foreground">

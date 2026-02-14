@@ -3,6 +3,7 @@ import { defineApp } from "convex/server";
 
 const app = defineApp();
 
+// oxlint-disable-next-line jest/require-hook
 app.use(betterAuth);
 
 export default app;
