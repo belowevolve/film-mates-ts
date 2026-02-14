@@ -38,27 +38,25 @@ export const Route = createRootRouteWithContext<{
   shellComponent: RootDocument,
 });
 
-function RootDocument({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {children}
-        <TanStackDevtools
-          config={{
-            position: "bottom-right",
-          }}
-          plugins={[
-            {
-              name: "Tanstack Router",
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
-        <Scripts />
-      </body>
-    </html>
-  );
-}
+const RootDocument = ({ children }: { children: React.ReactNode }) => (
+  <html lang="en">
+    <head>
+      <HeadContent />
+    </head>
+    <body>
+      {children}
+      <TanStackDevtools
+        config={{
+          position: "bottom-right",
+        }}
+        plugins={[
+          {
+            name: "Tanstack Router",
+            render: <TanStackRouterDevtoolsPanel />,
+          },
+        ]}
+      />
+      <Scripts />
+    </body>
+  </html>
+);

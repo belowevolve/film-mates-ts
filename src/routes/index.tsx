@@ -11,10 +11,10 @@ import { Input } from "@/components/ui/input";
 import { api } from "../../convex/_generated/api";
 
 export const Route = createFileRoute("/")({
-  component: Home,
+  component: () => <Home />,
 });
 
-function Home() {
+const Home = () => {
   const { data: tasks } = useSuspenseQuery(convexQuery(api.tasks.get, {}));
   const toggleTask = useMutation(api.tasks.toggle);
   const deleteTask = useMutation(api.tasks.remove);
@@ -83,4 +83,4 @@ function Home() {
       </div>
     </div>
   );
-}
+};
