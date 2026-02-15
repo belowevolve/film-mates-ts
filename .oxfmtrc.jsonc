@@ -26,4 +26,5 @@
     "functions": ["clsx", "cn"],
     "preserveWhitespace": true,
   },
+  "ignorePatterns": ["./convex/_generated/**"],
 }
