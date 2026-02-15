@@ -26,5 +26,5 @@
     "functions": ["clsx", "cn"],
     "preserveWhitespace": true,
   },
-  "ignorePatterns": ["./convex/_generated/**"],
+  "ignorePatterns": ["./convex/_generated/**", "**.gen.ts"],
 }

@@ -331,6 +331,7 @@ const MovieSearch = ({
         note: movie.note,
         watched: false,
       };
+
       ls.setQuery(
         api.listMovies.getByList,
         {

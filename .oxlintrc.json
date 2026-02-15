@@ -8,9 +8,9 @@
   "rules": {
     "func-style": "warn",
     "react-perf/jsx-no-new-function-as-prop": "off",
-    "max-statements": "off"
+    "max-statements": ["warn", { "max": 15 }]
   },
-  "ignorePatterns": ["convex/_generated/**"],
+  "ignorePatterns": ["convex/_generated/**", "**.gen.ts"],
   "overrides": [
     {
       "files": ["convex/**/*.ts"],
