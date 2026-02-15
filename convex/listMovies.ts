@@ -7,7 +7,7 @@ import type { Id } from "./_generated/dataModel";
 import type { QueryCtx } from "./_generated/server";
 
 import { internal } from "./_generated/api";
-import { action, internalMutation, mutation, query } from "./_generated/server";
+import { internalMutation, mutation, query } from "./_generated/server";
 import { authComponent } from "./auth";
 
 // Helper to check access
@@ -118,8 +118,7 @@ export const getByList = query({
   returns: v.array(listMovieWithDetailValidator),
 });
 
-// Add a movie to a list (action because it needs to ensure the movie exists in our DB)
-export const addToList = action({
+export const addToList = mutation({
   args: {
     backdropPath: v.optional(v.string()),
     genreIds: v.optional(v.array(v.number())),

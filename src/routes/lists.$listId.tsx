@@ -26,7 +26,7 @@ const posterUrl = (
 };
 
 export const Route = createFileRoute("/lists/$listId")({
-  component: ListDetail,
+  component: Page,
   loader: async ({ context, params }) => {
     const listId = params.listId as Id<"lists">;
     await Promise.all([
@@ -41,7 +41,11 @@ export const Route = createFileRoute("/lists/$listId")({
 });
 
 // oxlint-disable-next-line func-style
-function ListDetail() {
+function Page() {
+  return <ListDetail />;
+}
+
+const ListDetail = () => {
   const { listId: rawListId } = Route.useParams();
   const listId = rawListId as Id<"lists">;
 
@@ -58,8 +62,8 @@ function ListDetail() {
 
   if (!list) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-4">
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="space-y-4 text-center">
           <p className="text-muted-foreground">Список не найден</p>
           <Link to="/">
             <Button variant="secondary">На главную</Button>
@@ -74,23 +78,23 @@ function ListDetail() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-2 mb-2">
+        <div className="mx-auto max-w-4xl px-4 py-4">
+          <div className="mb-2 flex items-center gap-2">
             <Link
               to="/"
-              className="text-muted-foreground hover:text-foreground text-sm"
+              className="text-sm text-muted-foreground hover:text-foreground"
             >
               Film Mates
             </Link>
-            <span className="text-muted-foreground text-sm">/</span>
+            <span className="text-sm text-muted-foreground">/</span>
           </div>
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold">{list.name}</h1>
               {list.description && (
-                <p className="text-muted-foreground mt-1">{list.description}</p>
+                <p className="mt-1 text-muted-foreground">{list.description}</p>
               )}
-              <div className="flex gap-3 mt-2 text-sm text-muted-foreground">
+              <div className="mt-2 flex gap-3 text-sm text-muted-foreground">
                 <span>{list.moviesCount} фильмов</span>
                 <span>{list.membersCount} участников</span>
               </div>
@@ -115,7 +119,7 @@ function ListDetail() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+      <main className="mx-auto max-w-4xl space-y-6 px-4 py-6">
         {showInvite && (
           <InviteSection listId={listId} onClose={() => setShowInvite(false)} />
         )}
@@ -129,7 +133,7 @@ function ListDetail() {
             <CardContent className="py-12 text-center text-muted-foreground">
               <p>В списке пока нет фильмов</p>
               {canEdit && (
-                <p className="text-sm mt-1">
+                <p className="mt-1 text-sm">
                   Нажмите &laquo;Добавить фильм&raquo; чтобы найти и добавить
                   фильмы
                 </p>
@@ -148,18 +152,57 @@ function ListDetail() {
       </main>
     </div>
   );
-}
+};
 
-// oxlint-disable-next-line func-style
-function MovieCard({
+const MovieCard = ({
   listMovie,
   canEdit,
 }: {
   listMovie: ListMovieDetail;
   canEdit: boolean;
-}) {
-  const toggleWatched = useMutation(api.listMovies.toggleWatched);
-  const removeFromList = useMutation(api.listMovies.removeFromList);
+}) => {
+  const toggleWatched = useMutation(
+    api.listMovies.toggleWatched
+  ).withOptimisticUpdate((ls, args) => {
+    const { listMovieId } = args;
+
+    const listMovies = ls.getQuery(api.listMovies.getByList, {
+      listId: listMovie.listId,
+    });
+    if (!listMovies) {
+      return;
+    }
+    ls.setQuery(
+      api.listMovies.getByList,
+      {
+        listId: listMovie.listId,
+      },
+      listMovies.map((lm) =>
+        lm._id === listMovieId ? { ...lm, watched: !lm.watched } : lm
+      )
+    );
+  });
+
+  const removeFromList = useMutation(
+    api.listMovies.removeFromList
+  ).withOptimisticUpdate((ls, args) => {
+    const { listMovieId } = args;
+    const listMovies = ls.getQuery(api.listMovies.getByList, {
+      listId: listMovie.listId,
+    });
+
+    if (!listMovies) {
+      return;
+    }
+
+    ls.setQuery(
+      api.listMovies.getByList,
+      {
+        listId: listMovie.listId,
+      },
+      listMovies.filter((lm) => lm._id !== listMovieId)
+    );
+  });
 
   const { movie } = listMovie;
   if (!movie) {
@@ -174,14 +217,14 @@ function MovieCard({
           <img
             src={poster}
             alt={movie.title}
-            className="w-16 h-24 object-cover rounded shrink-0"
+            className="h-24 w-16 shrink-0 rounded object-cover"
           />
         ) : (
-          <div className="w-16 h-24 bg-muted rounded flex items-center justify-center shrink-0">
+          <div className="flex h-24 w-16 shrink-0 items-center justify-center rounded bg-muted">
             <span className="text-xs text-muted-foreground">N/A</span>
           </div>
         )}
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
             <div>
               <h3
@@ -196,25 +239,25 @@ function MovieCard({
               )}
             </div>
             {movie.voteAverage && (
-              <span className="text-sm font-medium shrink-0">
+              <span className="shrink-0 text-sm font-medium">
                 {movie.voteAverage.toFixed(1)}
               </span>
             )}
           </div>
           {movie.releaseDate && (
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="mt-1 text-xs text-muted-foreground">
               {movie.releaseDate.slice(0, 4)}
             </p>
           )}
           {movie.overview && (
-            <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+            <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
               {movie.overview}
             </p>
           )}
           {listMovie.note && (
-            <p className="text-xs text-primary mt-1 italic">{listMovie.note}</p>
+            <p className="mt-1 text-xs text-primary italic">{listMovie.note}</p>
           )}
-          <div className="flex gap-2 mt-2">
+          <div className="mt-2 flex gap-2">
             <Button
               variant={listMovie.watched ? "default" : "secondary"}
               size="sm"
@@ -236,22 +279,67 @@ function MovieCard({
       </CardContent>
     </Card>
   );
-}
+};
 
-// oxlint-disable-next-line func-style
-function MovieSearch({
+const MovieSearch = ({
   listId,
   onClose,
 }: {
   listId: Id<"lists">;
   onClose: () => void;
-}) {
+}) => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<MovieDetail[]>([]);
   const [loading, setLoading] = useState(false);
   const searchMovies = useAction(api.movies.search);
-  const addToList = useAction(api.listMovies.addToList);
-  const [addingIds, setAddingIds] = useState<Set<number>>(new Set());
+  const addToList = useMutation(api.listMovies.addToList).withOptimisticUpdate(
+    (ls, args) => {
+      const { listId, ...movie } = args;
+
+      const listMovies = ls.getQuery(api.listMovies.getByList, { listId });
+      if (!listMovies) {
+        return;
+      }
+
+      const canAdd = listMovies?.every(
+        (lm) => lm.movie?.tmdbId !== movie.tmdbId
+      );
+      if (!canAdd) {
+        return;
+      }
+
+      const listMovieId = crypto.randomUUID() as Id<"listMovies">;
+      const movieId = crypto.randomUUID() as Id<"movies">;
+      const now = Date.now();
+      const newListMovie = {
+        _creationTime: now,
+        _id: listMovieId,
+        addedAt: now,
+        addedBy: "user",
+        listId,
+        movie: {
+          _id: movieId,
+          originalTitle: movie.originalTitle,
+          overview: movie.overview,
+          posterPath: movie.posterPath,
+          releaseDate: movie.releaseDate,
+          title: movie.title,
+          tmdbId: movie.tmdbId,
+          voteAverage: movie.voteAverage,
+        },
+        movieId: movieId,
+        note: movie.note,
+        watched: false,
+      };
+      ls.setQuery(
+        api.listMovies.getByList,
+        {
+          listId,
+        },
+        [newListMovie, ...listMovies]
+      );
+    }
+  );
 
   const handleSearch = useCallback(
     async (e: React.FormEvent) => {
@@ -273,30 +361,19 @@ function MovieSearch({
   );
 
   const handleAdd = useCallback(
-    async (movie: MovieDetail) => {
-      setAddingIds((prev) => new Set(prev).add(movie.id));
-      try {
-        await addToList({
-          backdropPath: movie.backdropPath,
-          genreIds: movie.genreIds,
-          listId,
-          originalTitle: movie.originalTitle,
-          overview: movie.overview,
-          posterPath: movie.posterPath,
-          releaseDate: movie.releaseDate,
-          title: movie.title,
-          tmdbId: movie.id,
-          voteAverage: movie.voteAverage,
-        });
-      } catch (error) {
-        console.error("Add failed:", error);
-      } finally {
-        setAddingIds((prev) => {
-          const next = new Set(prev);
-          next.delete(movie.id);
-          return next;
-        });
-      }
+    (movie: MovieDetail) => {
+      addToList({
+        backdropPath: movie.backdropPath,
+        genreIds: movie.genreIds,
+        listId,
+        originalTitle: movie.originalTitle,
+        overview: movie.overview,
+        posterPath: movie.posterPath,
+        releaseDate: movie.releaseDate,
+        title: movie.title,
+        tmdbId: movie.id,
+        voteAverage: movie.voteAverage,
+      });
     },
     [addToList, listId]
   );
@@ -325,25 +402,25 @@ function MovieSearch({
         </form>
 
         {results.length > 0 && (
-          <div className="space-y-2 max-h-96 overflow-y-auto">
+          <div className="max-h-96 space-y-2 overflow-y-auto">
             {results.map((movie) => {
               const poster = posterUrl(movie.posterPath, "w92");
               return (
                 <div
                   key={movie.id}
-                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted"
+                  className="flex items-center gap-3 rounded-lg p-2 hover:bg-muted"
                 >
                   {poster ? (
                     <img
                       src={poster}
                       alt={movie.title}
-                      className="w-10 h-14 object-cover rounded shrink-0"
+                      className="h-14 w-10 shrink-0 rounded object-cover"
                     />
                   ) : (
-                    <div className="w-10 h-14 bg-muted rounded shrink-0" />
+                    <div className="h-14 w-10 shrink-0 rounded bg-muted" />
                   )}
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm truncate">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium">
                       {movie.title}
                     </p>
                     <p className="text-xs text-muted-foreground">
@@ -356,10 +433,9 @@ function MovieSearch({
                   <Button
                     size="sm"
                     variant="secondary"
-                    disabled={addingIds.has(movie.id)}
                     onClick={() => handleAdd(movie)}
                   >
-                    {addingIds.has(movie.id) ? "..." : "+"}
+                    +
                   </Button>
                 </div>
               );
@@ -369,16 +445,15 @@ function MovieSearch({
       </CardContent>
     </Card>
   );
-}
+};
 
-// oxlint-disable-next-line func-style
-function InviteSection({
+const InviteSection = ({
   listId,
   onClose,
 }: {
   listId: Id<"lists">;
   onClose: () => void;
-}) {
+}) => {
   const createInvite = useMutation(api.invites.create);
   const [inviteCode, setInviteCode] = useState<string | null>(null);
   const [role, setRole] = useState<"editor" | "viewer">("editor");
@@ -468,4 +543,4 @@ function InviteSection({
       </CardContent>
     </Card>
   );
-}
+};

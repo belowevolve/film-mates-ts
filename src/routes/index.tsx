@@ -76,7 +76,7 @@ function Home() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
           <h1 className="text-2xl font-bold">Film Mates</h1>
           <div className="flex items-center gap-3">
             {user ? (
@@ -105,7 +105,7 @@ function Home() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <main className="mx-auto max-w-4xl px-4 py-8">
         {user ? (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -147,7 +147,7 @@ function Home() {
               <Card>
                 <CardContent className="py-12 text-center text-muted-foreground">
                   <p>У вас пока нет списков</p>
-                  <p className="text-sm mt-1">
+                  <p className="mt-1 text-sm">
                     Создайте первый список или примите приглашение от друга
                   </p>
                 </CardContent>
@@ -161,11 +161,11 @@ function Home() {
                     params={{ listId: list._id }}
                     className="block"
                   >
-                    <Card className="hover:border-primary/50 transition-colors cursor-pointer h-full">
+                    <Card className="h-full cursor-pointer transition-colors hover:border-primary/50">
                       <CardHeader className="pb-2">
                         <div className="flex items-center justify-between">
                           <CardTitle className="text-lg">{list.name}</CardTitle>
-                          <span className="text-xs px-2 py-1 rounded-full bg-muted text-muted-foreground">
+                          <span className="rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground">
                             {roleLabels[list.role]}
                           </span>
                         </div>
@@ -185,9 +185,9 @@ function Home() {
             )}
           </div>
         ) : (
-          <div className="text-center py-16 space-y-4">
+          <div className="space-y-4 py-16 text-center">
             <h2 className="text-3xl font-bold">Совместные списки фильмов</h2>
-            <p className="text-muted-foreground max-w-md mx-auto">
+            <p className="mx-auto max-w-md text-muted-foreground">
               Создавайте списки фильмов, приглашайте друзей и выбирайте что
               посмотреть вместе
             </p>

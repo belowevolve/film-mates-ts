@@ -126,7 +126,7 @@ function LoginPage() {
             </div>
 
             {error && (
-              <p className="text-sm text-destructive text-center">{error}</p>
+              <p className="text-center text-sm text-destructive">{error}</p>
             )}
 
             <Button type="submit" className="w-full" isLoading={isLoading}>
@@ -137,7 +137,7 @@ function LoginPage() {
               {isSignUp ? "Уже есть аккаунт?" : "Нет аккаунта?"}{" "}
               <button
                 type="button"
-                className="text-primary underline-offset-4 hover:underline cursor-pointer"
+                className="cursor-pointer text-primary underline-offset-4 hover:underline"
                 onClick={() => {
                   setIsSignUp(!isSignUp);
                   setError(null);

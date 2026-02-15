@@ -20,4 +20,10 @@
     "newlinesBetween": true,
     "order": "asc",
   },
+  "experimentalTailwindcss": {
+    "stylesheet": "./src/styles.css",
+    "attributes": ["class", "className"],
+    "functions": ["clsx", "cn"],
+    "preserveWhitespace": true,
+  },
 }

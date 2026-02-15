@@ -67,7 +67,7 @@ function InvitePage() {
 
   if (!invite) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="flex min-h-screen items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <CardTitle>Приглашение не найдено</CardTitle>
@@ -87,7 +87,7 @@ function InvitePage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="flex min-h-screen items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <CardTitle>Приглашение в список</CardTitle>
@@ -96,7 +96,7 @@ function InvitePage() {
               {invite.role === "editor" ? " как редактора" : " как зрителя"}
             </CardDescription>
           </CardHeader>
-          <CardContent className="text-center space-y-4">
+          <CardContent className="space-y-4 text-center">
             <p className="text-sm text-muted-foreground">
               Войдите или зарегистрируйтесь, чтобы принять приглашение
             </p>
@@ -110,7 +110,7 @@ function InvitePage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle>Приглашение в список</CardTitle>
@@ -118,7 +118,7 @@ function InvitePage() {
             Вас приглашают в список &laquo;{invite.listName}&raquo;
           </CardDescription>
         </CardHeader>
-        <CardContent className="text-center space-y-4">
+        <CardContent className="space-y-4 text-center">
           {invite.listDescription && (
             <p className="text-sm text-muted-foreground">
               {invite.listDescription}
@@ -131,7 +131,7 @@ function InvitePage() {
             </span>
           </p>
           {error && <p className="text-sm text-destructive">{error}</p>}
-          <div className="flex gap-2 justify-center">
+          <div className="flex justify-center gap-2">
             <Button onClick={handleAccept} disabled={loading}>
               {loading ? "Принятие..." : "Принять приглашение"}
             </Button>
