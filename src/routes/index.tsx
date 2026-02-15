@@ -28,6 +28,12 @@ interface ListItem {
   role: "owner" | "editor" | "viewer";
 }
 
+const roleLabels = {
+  editor: "Редактор",
+  owner: "Владелец",
+  viewer: "Зритель",
+} as const;
+
 export const Route = createFileRoute("/")({
   component: Home,
   loader: async ({ context }) => {
@@ -95,7 +101,15 @@ function Home() {
                 </Button>
               </>
             ) : (
-              <Button size="sm" onClick={() => navigate({ to: "/login" })}>
+              <Button
+                size="sm"
+                onClick={() =>
+                  navigate({
+                    search: { redirect: location.href },
+                    to: "/login",
+                  })
+                }
+              >
                 Войти
               </Button>
             )}
@@ -104,18 +118,7 @@ function Home() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-8">
-        {!user ? (
-          <div className="text-center py-16 space-y-4">
-            <h2 className="text-3xl font-bold">Совместные списки фильмов</h2>
-            <p className="text-muted-foreground max-w-md mx-auto">
-              Создавайте списки фильмов, приглашайте друзей и выбирайте что
-              посмотреть вместе
-            </p>
-            <Button size="lg" onClick={() => navigate({ to: "/login" })}>
-              Начать
-            </Button>
-          </div>
-        ) : (
+        {user ? (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold">Мои списки</h2>
@@ -175,11 +178,7 @@ function Home() {
                         <div className="flex items-center justify-between">
                           <CardTitle className="text-lg">{list.name}</CardTitle>
                           <span className="text-xs px-2 py-1 rounded-full bg-muted text-muted-foreground">
-                            {list.role === "owner"
-                              ? "Владелец"
-                              : (list.role === "editor"
-                                ? "Редактор"
-                                : "Зритель")}
+                            {roleLabels[list.role]}
                           </span>
                         </div>
                         {list.description && (
@@ -196,6 +195,22 @@ function Home() {
                 ))}
               </div>
             )}
+          </div>
+        ) : (
+          <div className="text-center py-16 space-y-4">
+            <h2 className="text-3xl font-bold">Совместные списки фильмов</h2>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              Создавайте списки фильмов, приглашайте друзей и выбирайте что
+              посмотреть вместе
+            </p>
+            <Button
+              size="lg"
+              onClick={() =>
+                navigate({ search: { redirect: location.href }, to: "/login" })
+              }
+            >
+              Начать
+            </Button>
           </div>
         )}
       </main>

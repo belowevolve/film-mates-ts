@@ -44,13 +44,21 @@ const buttonVariants = cva(
 
 const Button = ({
   className,
+  isLoading,
+  disabled,
   variant = "default",
   size = "default",
   ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) => (
+}: ButtonPrimitive.Props &
+  VariantProps<typeof buttonVariants> & { isLoading?: boolean }) => (
   <ButtonPrimitive
     data-slot="button"
-    className={cn(buttonVariants({ className, size, variant }))}
+    disabled={isLoading || disabled}
+    focusableWhenDisabled={isLoading}
+    className={cn(
+      buttonVariants({ className, size, variant }),
+      isLoading && "animate-pulse"
+    )}
     {...props}
   />
 );

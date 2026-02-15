@@ -1,5 +1,4 @@
 // oxlint-disable react/no-array-index-key
-"use client";
 
 import type { VariantProps } from "class-variance-authority";
 

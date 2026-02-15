@@ -23,18 +23,18 @@ export const Route = createFileRoute("/login")({
 // oxlint-disable-next-line func-style
 function LoginPage() {
   const navigate = useNavigate();
-  const { redirect: redirectTo } = Route.useSearch();
+  const search = Route.useSearch();
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    setLoading(true);
+    setIsLoading(true);
 
     try {
       if (isSignUp) {
@@ -59,15 +59,15 @@ function LoginPage() {
       }
 
       // Redirect back to the original page or home
-      if (redirectTo) {
-        window.location.href = redirectTo;
+      if (search?.redirect) {
+        window.location.href = search.redirect;
       } else {
         await navigate({ to: "/" });
       }
     } catch (error) {
       setError(error instanceof Error ? error.message : "Что-то пошло не так");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -129,12 +129,8 @@ function LoginPage() {
               <p className="text-sm text-destructive text-center">{error}</p>
             )}
 
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading
-                ? "Загрузка..."
-                : (isSignUp
-                  ? "Зарегистрироваться"
-                  : "Войти")}
+            <Button type="submit" className="w-full" isLoading={isLoading}>
+              {isSignUp ? "Зарегистрироваться" : "Войти"}
             </Button>
 
             <p className="text-center text-sm text-muted-foreground">

@@ -228,7 +228,7 @@ function MovieCard({
                 </p>
               )}
             </div>
-            {movie.voteAverage != null && movie.voteAverage > 0 && (
+            {movie.voteAverage && (
               <span className="text-sm font-medium shrink-0">
                 {movie.voteAverage.toFixed(1)}
               </span>
@@ -430,7 +430,7 @@ function InviteSection({
   }, [createInvite, listId, role]);
 
   const inviteUrl = inviteCode
-    ? `${typeof window !== "undefined" ? window.location.origin : ""}/invite/${inviteCode}`
+    ? `${window.location.origin}/invite/${inviteCode}`
     : null;
 
   return (
@@ -444,7 +444,33 @@ function InviteSection({
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {!inviteCode ? (
+        {inviteCode ? (
+          <div className="space-y-3">
+            <p className="text-sm">Поделитесь этой ссылкой:</p>
+            <div className="flex gap-2">
+              <Input value={inviteUrl ?? ""} readOnly />
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  if (inviteUrl) {
+                    navigator.clipboard.writeText(inviteUrl);
+                  }
+                }}
+              >
+                Копировать
+              </Button>
+            </div>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                setInviteCode(null);
+              }}
+            >
+              Создать ещё
+            </Button>
+          </div>
+        ) : (
           <div className="space-y-3">
             <div className="flex gap-2">
               <Button
@@ -469,32 +495,6 @@ function InviteSection({
             </p>
             <Button onClick={handleCreateInvite} disabled={loading}>
               {loading ? "Создание..." : "Создать ссылку"}
-            </Button>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            <p className="text-sm">Поделитесь этой ссылкой:</p>
-            <div className="flex gap-2">
-              <Input value={inviteUrl ?? ""} readOnly />
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  if (inviteUrl) {
-                    navigator.clipboard.writeText(inviteUrl);
-                  }
-                }}
-              >
-                Копировать
-              </Button>
-            </div>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => {
-                setInviteCode(null);
-              }}
-            >
-              Создать ещё
             </Button>
           </div>
         )}

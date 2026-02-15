@@ -10,5 +10,13 @@
     "react-perf/jsx-no-new-function-as-prop": "off",
     "max-statements": "off"
   },
-  "ignorePatterns": ["**/convex/_generated/**"]
+  "ignorePatterns": ["convex/_generated/**"],
+  "overrides": [
+    {
+      "files": ["convex/**/*.ts"],
+      "rules": {
+        "unicorn/filename-case": "off"
+      }
+    }
+  ]
 }

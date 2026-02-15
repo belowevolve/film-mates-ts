@@ -1,4 +1,3 @@
-/* eslint unicorn/filename-case: "off" */
 import type { GenericCtx } from "@convex-dev/better-auth";
 
 import { v } from "convex/values";

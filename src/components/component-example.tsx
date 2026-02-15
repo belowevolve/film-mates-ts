@@ -1,5 +1,3 @@
-"use client";
-
 import {
   BluetoothIcon,
   CodeIcon,

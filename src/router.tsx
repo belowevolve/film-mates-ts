@@ -33,6 +33,7 @@ export const getRouter = () => {
     ),
     context: { convexQueryClient, queryClient },
     defaultNotFoundComponent: () => <div>Not found</div>,
+    defaultPendingComponent: () => <div>Loading...</div>,
     defaultPreload: "intent",
     routeTree,
     scrollRestoration: true,
