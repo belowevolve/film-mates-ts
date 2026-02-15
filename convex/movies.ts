@@ -1,6 +1,28 @@
+import type { Infer } from "convex/values";
+
 import { v } from "convex/values";
 
 import { action, internalMutation, query } from "./_generated/server";
+
+const movieDetailValidator = v.object({
+  backdropPath: v.optional(v.string()),
+  genreIds: v.optional(v.array(v.number())),
+  id: v.number(),
+  originalTitle: v.optional(v.string()),
+  overview: v.optional(v.string()),
+  posterPath: v.optional(v.string()),
+  releaseDate: v.optional(v.string()),
+  title: v.string(),
+  voteAverage: v.optional(v.number()),
+});
+export type MovieDetail = Infer<typeof movieDetailValidator>;
+
+const movieSearchResultValidator = v.object({
+  results: v.array(movieDetailValidator),
+  totalPages: v.number(),
+  totalResults: v.number(),
+});
+export type MovieSearchResult = Infer<typeof movieSearchResultValidator>;
 
 // Search movies via TMDb API (action because it makes HTTP calls)
 export const search = action({
@@ -55,23 +77,7 @@ export const search = action({
       totalResults: data.total_results,
     };
   },
-  returns: v.object({
-    results: v.array(
-      v.object({
-        backdropPath: v.optional(v.string()),
-        genreIds: v.optional(v.array(v.number())),
-        id: v.number(),
-        originalTitle: v.optional(v.string()),
-        overview: v.optional(v.string()),
-        posterPath: v.optional(v.string()),
-        releaseDate: v.optional(v.string()),
-        title: v.string(),
-        voteAverage: v.optional(v.number()),
-      })
-    ),
-    totalPages: v.number(),
-    totalResults: v.number(),
-  }),
+  returns: movieSearchResultValidator,
 });
 
 // Get popular movies from TMDb

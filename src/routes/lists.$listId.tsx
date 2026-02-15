@@ -5,6 +5,8 @@ import { useAction, useMutation } from "convex/react";
 import { useCallback, useState } from "react";
 
 import type { Id } from "@/convex/_generated/dataModel";
+import type { ListMovieDetail } from "@/convex/listMovies";
+import type { MovieDetail } from "@/convex/movies";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,41 +24,6 @@ const posterUrl = (
   }
   return `${TMDB_IMAGE_BASE}/${size}${path}`;
 };
-
-interface TmdbSearchResult {
-  backdropPath?: string;
-  genreIds?: number[];
-  id: number;
-  originalTitle?: string;
-  overview?: string;
-  posterPath?: string;
-  releaseDate?: string;
-  title: string;
-  voteAverage?: number;
-}
-
-interface MovieDetail {
-  _id: Id<"movies">;
-  originalTitle?: string;
-  overview?: string;
-  posterPath?: string;
-  releaseDate?: string;
-  title: string;
-  tmdbId: number;
-  voteAverage?: number;
-}
-
-interface ListMovieItem {
-  _creationTime: number;
-  _id: Id<"listMovies">;
-  addedAt: number;
-  addedBy: string;
-  listId: Id<"lists">;
-  movie: MovieDetail | null;
-  movieId: Id<"movies">;
-  note?: string;
-  watched: boolean;
-}
 
 export const Route = createFileRoute("/lists/$listId")({
   component: ListDetail,
@@ -84,7 +51,7 @@ function ListDetail() {
 
   const { data: listMovies } = useSuspenseQuery(
     convexQuery(api.listMovies.getByList, { listId })
-  ) as { data: ListMovieItem[] };
+  );
 
   const [showSearch, setShowSearch] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
@@ -188,7 +155,7 @@ function MovieCard({
   listMovie,
   canEdit,
 }: {
-  listMovie: ListMovieItem;
+  listMovie: ListMovieDetail;
   canEdit: boolean;
 }) {
   const toggleWatched = useMutation(api.listMovies.toggleWatched);
@@ -280,7 +247,7 @@ function MovieSearch({
   onClose: () => void;
 }) {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<TmdbSearchResult[]>([]);
+  const [results, setResults] = useState<MovieDetail[]>([]);
   const [loading, setLoading] = useState(false);
   const searchMovies = useAction(api.movies.search);
   const addToList = useAction(api.listMovies.addToList);
@@ -306,7 +273,7 @@ function MovieSearch({
   );
 
   const handleAdd = useCallback(
-    async (movie: TmdbSearchResult) => {
+    async (movie: MovieDetail) => {
       setAddingIds((prev) => new Set(prev).add(movie.id));
       try {
         await addToList({

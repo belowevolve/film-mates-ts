@@ -1,4 +1,5 @@
 import type { GenericCtx } from "@convex-dev/better-auth";
+import type { Infer } from "convex/values";
 
 import { v } from "convex/values";
 
@@ -61,6 +62,8 @@ const listMovieWithDetailValidator = v.object({
   note: v.optional(v.string()),
   watched: v.boolean(),
 });
+
+export type ListMovieDetail = Infer<typeof listMovieWithDetailValidator>;
 
 // Get all movies in a list
 export const getByList = query({

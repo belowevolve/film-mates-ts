@@ -4,8 +4,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation } from "convex/react";
 import { useCallback, useState } from "react";
 
-import type { Id } from "@/convex/_generated/dataModel";
-
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,16 +15,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { api } from "@/convex/_generated/api";
 import { authClient } from "@/lib/auth-client";
-
-interface ListItem {
-  _id: Id<"lists">;
-  _creationTime: number;
-  name: string;
-  description?: string;
-  ownerId: string;
-  createdAt: number;
-  role: "owner" | "editor" | "viewer";
-}
 
 const roleLabels = {
   editor: "Редактор",
@@ -56,7 +44,7 @@ function Home() {
   );
   const { data: lists } = useSuspenseQuery(
     convexQuery(api.lists.getMyLists, {})
-  ) as { data: ListItem[] };
+  );
   const createList = useMutation(api.lists.create);
   const [newListName, setNewListName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
