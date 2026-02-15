@@ -56,7 +56,9 @@ function InvitePage() {
       }
     } catch (error) {
       setError(
-        error instanceof Error ? error.message : "Ошибка при принятии приглашения"
+        error instanceof Error
+          ? error.message
+          : "Ошибка при принятии приглашения"
       );
     } finally {
       setLoading(false);
