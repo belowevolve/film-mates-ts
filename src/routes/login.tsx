@@ -15,11 +15,15 @@ import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
+  validateSearch: (search: Record<string, unknown>) => ({
+    redirect: (search.redirect as string) || undefined,
+  }),
 });
 
 // oxlint-disable-next-line func-style
 function LoginPage() {
   const navigate = useNavigate();
+  const { redirect: redirectTo } = Route.useSearch();
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -40,7 +44,7 @@ function LoginPage() {
           password,
         });
         if (result.error) {
-          setError(result.error.message ?? "Sign up failed");
+          setError(result.error.message ?? "Ошибка регистрации");
           return;
         }
       } else {
@@ -49,14 +53,19 @@ function LoginPage() {
           password,
         });
         if (result.error) {
-          setError(result.error.message ?? "Sign in failed");
+          setError(result.error.message ?? "Ошибка входа");
           return;
         }
       }
 
-      await navigate({ to: "/" });
+      // Redirect back to the original page or home
+      if (redirectTo) {
+        window.location.href = redirectTo;
+      } else {
+        await navigate({ to: "/" });
+      }
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Something went wrong");
+      setError(error instanceof Error ? error.message : "Что-то пошло не так");
     } finally {
       setLoading(false);
     }
@@ -67,21 +76,23 @@ function LoginPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">
-            {isSignUp ? "Create Account" : "Welcome Back"}
+            {isSignUp ? "Регистрация" : "Вход"}
           </CardTitle>
           <CardDescription>
-            {isSignUp ? "Sign up to get started" : "Sign in to your account"}
+            {isSignUp
+              ? "Создайте аккаунт чтобы начать"
+              : "Войдите в свой аккаунт"}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {isSignUp && (
               <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="name">Имя</Label>
                 <Input
                   id="name"
                   type="text"
-                  placeholder="Your name"
+                  placeholder="Ваше имя"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -102,11 +113,11 @@ function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Пароль</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder="Введите пароль"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -119,11 +130,15 @@ function LoginPage() {
             )}
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Loading..." : (isSignUp ? "Sign Up" : "Sign In")}
+              {loading
+                ? "Загрузка..."
+                : (isSignUp
+                  ? "Зарегистрироваться"
+                  : "Войти")}
             </Button>
 
             <p className="text-center text-sm text-muted-foreground">
-              {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
+              {isSignUp ? "Уже есть аккаунт?" : "Нет аккаунта?"}{" "}
               <button
                 type="button"
                 className="text-primary underline-offset-4 hover:underline cursor-pointer"
@@ -132,7 +147,7 @@ function LoginPage() {
                   setError(null);
                 }}
               >
-                {isSignUp ? "Sign In" : "Sign Up"}
+                {isSignUp ? "Войти" : "Зарегистрироваться"}
               </button>
             </p>
           </form>

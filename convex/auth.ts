@@ -3,6 +3,7 @@ import type { GenericCtx } from "@convex-dev/better-auth";
 import { createClient } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
 import { betterAuth } from "better-auth/minimal";
+import { v } from "convex/values";
 
 import { components } from "./_generated/api";
 import { query } from "./_generated/server";
@@ -18,21 +19,35 @@ export const createAuth = (ctx: GenericCtx) =>
   betterAuth({
     baseURL: siteUrl,
     database: authComponent.adapter(ctx),
-    // Configure simple, non-verified email/password to get started
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: false,
     },
-    plugins: [
-      // The Convex plugin is required for Convex compatibility
-      convex({ authConfig }),
-    ],
+    plugins: [convex({ authConfig })],
   });
 
-// Example function for getting the current user
-// Feel free to edit, omit, etc.
+// Get the current user, or null if not authenticated
 export const getCurrentUser = query({
   args: {},
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handler: async (ctx) => await authComponent.getAuthUser(ctx as any),
+  handler: async (ctx) => {
+    const user = await authComponent.safeGetAuthUser(ctx as GenericCtx);
+    if (!user) {
+      return null;
+    }
+    return {
+      email: user.email,
+      id: user._id as string,
+      image: user.image,
+      name: user.name,
+    };
+  },
+  returns: v.union(
+    v.object({
+      email: v.string(),
+      id: v.string(),
+      image: v.optional(v.union(v.null(), v.string())),
+      name: v.string(),
+    }),
+    v.null()
+  ),
 });

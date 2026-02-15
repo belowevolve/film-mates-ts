@@ -61,7 +61,7 @@ export const Route = createRootRouteWithContext<{
         name: "viewport",
       },
       {
-        title: "TanStack Start Starter",
+        title: "Film Mates",
       },
     ],
   }),
